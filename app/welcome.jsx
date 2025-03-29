@@ -4,7 +4,6 @@ import ScreenWrapper from "../components/ScreenWrapper";
 import { StatusBar } from "expo-status-bar";
 import { hp, wp } from "../helpers/common";
 import { theme } from "../constants/theme";
-import { push } from "expo-router/build/global-state/routing";
 import Button from "../components/Button";
 import { useRouter } from "expo-router";
 

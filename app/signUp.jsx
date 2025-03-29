@@ -8,6 +8,7 @@ import Input from "../components/Input";
 import ScreenWrapper from "../components/ScreenWrapper";
 import { theme } from "../constants/theme";
 import { hp, wp } from "../helpers/common";
+import { supabase } from "../lib/supabase";
 
 const SignUp = () => {
   const router = useRouter();
@@ -19,6 +20,33 @@ const SignUp = () => {
   const onSubmit = async () => {
     if (!emailRef.current || !passwordRef.current || !nameRef.current) {
       alert("Please enter email and password and name");
+      return;
+    }
+
+    let name = nameRef.current.trim();
+    let email = emailRef.current.trim();
+    let password = passwordRef.current.trim();
+
+    setLoading(true);
+
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          email
+        },
+      }
+    });
+
+    setLoading(false);
+
+    if (error) {
+      alert("Sign Up Failed: ", error);
       return;
     }
   };
@@ -74,7 +102,7 @@ const SignUp = () => {
                 },
               ]}
             >
-             Login
+              Login
             </Text>
           </Pressable>
         </View>
