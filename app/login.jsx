@@ -1,6 +1,13 @@
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
-import { Pressable, StatusBar, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import Icon from "../assets/icons";
 import BackButton from "../components/BackButton";
 import Button from "../components/Button";
@@ -8,6 +15,7 @@ import Input from "../components/Input";
 import ScreenWrapper from "../components/ScreenWrapper";
 import { theme } from "../constants/theme";
 import { hp, wp } from "../helpers/common";
+import { supabase } from "../lib/supabase";
 
 const Login = () => {
   const router = useRouter();
@@ -16,9 +24,25 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const onSubmit = async () => {
-    if( !emailRef.current || !passwordRef.current){
+    if (!emailRef.current || !passwordRef.current) {
       alert("Please enter email and password");
       return;
+    }
+
+    let email = emailRef.current.trim();
+    let password = passwordRef.current.trim();
+
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    console.log("error: ", error);
+    setLoading(false);
+
+    if (error) {
+      Alert.alert("Login Failed: ", error);
     }
   };
 
@@ -61,7 +85,7 @@ const Login = () => {
         {/* footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Don't have an account?</Text>
-          <Pressable  onPress={() => router.push("signUp")}>
+          <Pressable onPress={() => router.push("signUp")}>
             <Text
               style={[
                 styles.footerText,
